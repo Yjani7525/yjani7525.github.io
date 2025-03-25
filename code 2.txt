@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centerpoint Grocery and Deli</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; text-align: center; }
+        header { background: #333; color: white; padding: 10px; font-size: 24px; }
+        .container { padding: 20px; }
+        .section { margin: 20px auto; width: 80%; max-width: 800px; text-align: left; }
+        .products img, .gallery img { width: 100px; height: auto; margin: 10px; }
+        .search-container { margin: 20px; }
+        .search-container input { width: 80%; padding: 10px; font-size: 16px; }
+        footer { background: #333; color: white; padding: 10px; text-align: center; }
+        .promotion-banner { background: yellow; padding: 10px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+    <header>Centerpoint Grocery and Deli</header>
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Search products..." oninput="aiSearch()">
+        </div>
+        <h2>AI Learning System</h2>
+        <div class="section ai-system">
+            <p>Our AI-powered system suggests products and promotions based on search trends, reviews, and past purchases.</p>
+            <p>Additionally, it tracks customer searches to recommend new stock items we should consider adding to the store!</p>
+            <ul id="recommended-items"></ul>
+        </div>
+        <h2>Store Hours</h2>
+        <div class="section hours">
+            <p>Monday - Friday: 7:30 a.m. – 9:30 p.m.</p>
+            <p>Saturday: 9:00 a.m. – 9:30 p.m.</p>
+            <p>Sunday: 9:00 a.m. – 8:30 p.m.</p>
+        </div>
+        <h2>UPS Pickup Hours</h2>
+        <div class="section ups">
+            <p>Monday - Saturday: 10:00 a.m. – 8:00 p.m.</p>
+            <p>Sunday: 10:00 a.m. – 7:00 p.m.</p>
+        </div>
+        <h2>Products We Sell</h2>
+        <div class="section products">
+            <p>✔ Cigarettes</p>
+            <p>✔ Bongs</p>
+            <p>✔ Snacks</p>
+            <p>✔ Chocolates</p>
+            <p>✔ Groceries</p>
+            <p>✔ Beverages</p>
+        </div>
+        <h2>Gallery</h2>
+        <div class="section gallery">
+            <img src="store1.jpg" alt="Store Interior">
+            <img src="store2.jpg" alt="Product Shelves">
+            <img src="store3.jpg" alt="Cash Counter">
+        </div>
+        <h2>Customer Testimonials</h2>
+        <div class="section testimonials">
+            <blockquote>"Great service and amazing selection!" - Emily R.</blockquote>
+            <blockquote>"Best convenience store in town!" - David S.</blockquote>
+        </div>
+        <h2>Leave a Review</h2>
+        <div class="section reviews">
+            <p>We are new owners! Let us know how we can improve.</p>
+            <form class="review-form">
+                <textarea placeholder="Write your review here..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <h2>Special Promotions</h2>
+        <div class="section promotions">
+            <div class="promotion-banner">🔥 Buy One Get One Free on Selected Snacks! 🔥</div>
+            <div class="promotion-banner">💥 10% Off All Beverages This Week! 💥</div>
+        </div>
+        <h2>Contact Us</h2>
+        <div class="section contact">
+            <p>📍 Address: 101 14 Ave SE, Calgary, AB T2G 1C6</p>
+            <p>📞 Phone: +1 403-232-6777</p>
+            <p>📧 Email: support@centerpointgrocery.com</p>
+        </div>
+    </div>
+    <footer>© 2025 Centerpoint Grocery and Deli</footer>
+    <script>
+        let searchHistory = {};
+
+        function aiSearch() {
+            let query = document.getElementById("search").value.toLowerCase();
+            let items = document.querySelectorAll(".products p");
+            items.forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(query) ? "block" : "none";
+            });
+            
+            if (query.length > 2) {
+                if (!searchHistory[query]) {
+                    searchHistory[query] = 1;
+                } else {
+                    searchHistory[query]++;
+                }
+            }
+            updateRecommendations();
+        }
+
+        function updateRecommendations() {
+            let recommendedList = document.getElementById("recommended-items");
+            recommendedList.innerHTML = "";
+            
+            let sortedSearches = Object.entries(searchHistory).sort((a, b) => b[1] - a[1]);
+            sortedSearches.slice(0, 5).forEach(search => {
+                let listItem = document.createElement("li");
+                listItem.textContent = `Customers are searching for: ${search[0]}`;
+                recommendedList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
