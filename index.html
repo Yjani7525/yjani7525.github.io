@@ -3,180 +3,262 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CenterPoint Grocery</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <title>CenterPoint Grocery Preview</title>
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
   <style>
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f7f6f3;
-      color: #2c2c2c;
+      font-family: Arial, sans-serif;
+      background: #eaeaea;
       margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #ffffff;
-      border-bottom: 1px solid #ddd;
       padding: 20px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .menu {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    .menu-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      width: 250px;
+    }
+    .dropdown input,
+    .dropdown button {
+      width: 100%;
+      margin-top: 5px;
+      padding: 8px;
+      font-size: 1rem;
+    }
+    h2 {
       text-align: center;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-      font-weight: 600;
+    .nav {
+      text-align: center;
+      margin-bottom: 20px;
     }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      padding: 15px 0;
-      background-color: #eee;
-    }
-    nav a {
+    .nav a {
+      margin: 0 10px;
       text-decoration: none;
       color: #333;
-      font-weight: 500;
+      font-weight: bold;
+      background: #f0f0f0;
+      padding: 8px 12px;
+      border-radius: 5px;
     }
-    .hero {
-      padding: 40px;
+    .offers {
+      background: #fdf6e3;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .offers h3 {
       text-align: center;
-      background: #e9e7e1;
+      margin-bottom: 10px;
     }
-    .hero h2 {
-      font-size: 1.8rem;
+    .offers ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .offers li {
+      font-size: 1.1rem;
+      margin: 10px 0;
     }
     .products {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 20px;
-      padding: 30px;
+      margin-top: 20px;
     }
-    .product {
-      background: #fff;
-      padding: 15px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    .product-card {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
       text-align: center;
     }
-    .product img {
+    .product-card img {
       max-width: 100%;
-      height: auto;
-      margin-bottom: 10px;
+      height: 150px;
+      object-fit: contain;
     }
-    .product h3 {
-      font-size: 1.1rem;
+    .product-card h3 {
       margin: 10px 0 5px;
     }
-    .product p {
-      color: #555;
-      font-size: 0.9rem;
-    }
-    .admin-login {
-      text-align: center;
-      padding: 30px;
-    }
-    .admin-login input[type="password"] {
-      padding: 10px;
-      width: 200px;
-      font-size: 1rem;
-      margin-right: 10px;
-    }
-    .admin-login button {
-      padding: 10px 20px;
-      font-size: 1rem;
-      background-color: #555;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-    .admin-panel {
-      display: none;
-      padding: 30px;
-      background: #fff;
-      max-width: 600px;
-      margin: 0 auto;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-    }
-    .admin-panel h2 {
-      margin-top: 0;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #f2f2f2;
-      color: #666;
-      font-size: 0.9rem;
+    .product-card p {
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>CenterPoint Grocery</h1>
-  </header>
-  <nav>
-    <a href="#">Drinks</a>
-    <a href="#">Snacks</a>
-    <a href="#">Smokes</a>
-    <a href="#">Dairy</a>
-    <a href="#">Offers</a>
-  </nav>
-  <div class="hero">
-    <h2>Fresh Deals Every Day at Your Local Convenience Store</h2>
+  <div class="container">
+    <div class="menu">
+      <button class="menu-btn" onclick="toggleMenu()">☰</button>
+      <div class="dropdown" id="adminMenu">
+        <a href="admin.html" target="_blank"><button>Go to Admin Panel</button></a>
+        <button onclick="startScanner()">📷 Start Barcode Scanner</button>
+        <input type="text" id="manualBarcode" placeholder="Enter barcode number manually">
+        <button onclick="submitBarcode()">Submit</button>
+      </div>
+    </div>
+
+    <h2>CenterPoint Grocery</h2>
+
+    <div style="text-align: center; margin: 20px auto;">
+      <label for="categoryFilter">Filter by Category:</label>
+      <select id="categoryFilter" onchange="filterProducts()" style="padding: 6px; font-size: 1rem; margin-left: 8px;">
+        <option value="All">All</option>
+        <option value="Snacks">Snacks</option>
+        <option value="Tobacco">Tobacco</option>
+        <option value="Tobacco Accessories">Tobacco Accessories</option>
+        <option value="Drinks">Drinks</option>
+        <option value="Coffee">Coffee</option>
+      </select>
+    </div>
+
+    <div class="offers">
+      <h3>Special Offers</h3>
+      <ul>
+        <li>🥤 Coke Can - $1.80 each</li>
+        <li>🥤 2 Bottles of Any Coke Product - $7.50</li>
+        <li>☕ Free Coffee or Tea with In-Store Purchase</li>
+        <li>🎁 Bundle Deals Coming Soon!</li>
+      </ul>
+    </div>
+
+    <div class="products" id="previewList"></div>
   </div>
-  <section class="products">
-    <div class="product">
-      <img src="https://via.placeholder.com/250x150?text=Milk" alt="Milk">
-      <h3>Fresh Milk</h3>
-      <p>$2.99</p>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/250x150?text=Ice+Cream" alt="Ice Cream">
-      <h3>Ice Cream</h3>
-      <p>$4.49</p>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/250x150?text=Soda" alt="Soda">
-      <h3>Soda</h3>
-      <p>$1.49</p>
-    </div>
-    <div class="product">
-      <img src="https://via.placeholder.com/250x150?text=Cigarettes" alt="Cigarettes">
-      <h3>Cigarettes</h3>
-      <p>$8.99</p>
-    </div>
-  </section>
-  <div class="admin-login">
-    <h2>Admin Login</h2>
-    <input type="password" id="adminPassword" placeholder="Enter password">
-    <button onclick="checkPassword()">Login</button>
-  </div>
-  <div class="admin-panel" id="adminPanel">
-    <h2>Add New Product</h2>
-    <form>
-      <label>Product Name:</label><br>
-      <input type="text" style="width:100%; padding:10px;"><br><br>
-      <label>Price:</label><br>
-      <input type="text" style="width:100%; padding:10px;"><br><br>
-      <label>Category:</label><br>
-      <input type="text" style="width:100%; padding:10px;"><br><br>
-      <label>Upload Image:</label><br>
-      <input type="file"><br><br>
-      <button type="submit" style="padding:10px 20px; background:#444; color:#fff; border:none;">Add Product</button>
-    </form>
-  </div>
-  <footer>
-    <p>&copy; 2025 CenterPoint Grocery. All rights reserved.</p>
-  </footer>
+
   <script>
-    function checkPassword() {
-      const password = document.getElementById('adminPassword').value;
-      if (password === '6537') {
-        document.getElementById('adminPanel').style.display = 'block';
+    function toggleMenu() {
+      const menu = document.getElementById("adminMenu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    const exampleProducts = JSON.parse(localStorage.getItem("products")) || [
+      {
+        name: "Potato Chips",
+        price: "2.99",
+        category: "Snacks",
+        image: "https://mxxuqnjfoumin.mejfsxv.supabase.co/storage/v1/object/public/assets/chips.jpg"
+      },
+      {
+        name: "Chocolate Bar",
+        price: "1.50",
+        category: "Snacks",
+        image: "https://mxxuqnjfoumin.mejfsxv.supabase.co/storage/v1/object/public/assets/chocolate.jpg"
+      },
+      {
+        name: "Trail Mix",
+        price: "3.99",
+        category: "Snacks",
+        image: "https://mxxuqnjfoumin.mejfsxv.supabase.co/storage/v1/object/public/assets/trailmix.jpg"
+      },
+      {
+        name: "Glass Bong",
+        price: "29.99",
+        category: "Tobacco Accessories",
+        image: "https://mxxuqnjfoumin.mejfsxv.supabase.co/storage/v1/object/public/assets/bong.jpg"
+      },
+      {
+        name: "Rolling Papers",
+        price: "2.49",
+        category: "Tobacco Accessories",
+        image: "https://mxxuqnjfoumin.mejfsxv.supabase.co/storage/v1/object/public/assets/rolling-papers.jpg"
+      },
+      {
+        name: "Butane Lighter",
+        price: "3.99",
+        category: "Tobacco Accessories",
+        image: "https://mxxuqnjfoumin.mejfsxv.supabase.co/storage/v1/object/public/assets/lighter.jpg"
+      },
+      {
+        name: "Premium Smokes",
+        price: "14.99",
+        category: "Tobacco",
+        image: "https://mxxuqnjfoumin.mejfsxv.supabase.co/storage/v1/object/public/assets/smokes.jpg"
+      },
+      {
+        name: "Coke Can",
+        price: "1.80",
+        category: "Drinks",
+        image: "https://mxxuqnjfoumin.mejfsxv.supabase.co/storage/v1/object/public/assets/soda-cans.jpg"
+      },
+      {
+        name: "Fresh Coffee",
+        price: "Free with Purchase",
+        category: "Coffee",
+        image: "https://mxxuqnjfoumin.mejfsxv.supabase.co/storage/v1/object/public/assets/coffee-beans.jpg"
+      }
+    ];
+
+    const list = document.getElementById("previewList");
+    function renderProducts(products) {
+      list.innerHTML = "";
+      products.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
+          <img src="${p.image}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <p>Price: $${p.price}</p>
+          <p>Category: ${p.category}</p>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function filterProducts() {
+      const selected = document.getElementById("categoryFilter").value;
+      if (selected === "All") {
+        renderProducts(exampleProducts);
       } else {
-        alert('Incorrect password');
+        const filtered = exampleProducts.filter(p => p.category === selected);
+        renderProducts(filtered);
+      }
+    }
+
+    renderProducts(exampleProducts);
+
+    function startScanner() {
+      const codeReader = new ZXing.BrowserBarcodeReader();
+      codeReader.getVideoInputDevices().then(videoInputDevices => {
+        const firstDeviceId = videoInputDevices[0].deviceId;
+        codeReader.decodeFromVideoDevice(firstDeviceId, null, result => {
+          if (result) {
+            alert(`Scanned Code: ${result.text}`);
+            codeReader.reset();
+          }
+        });
+      });
+    }
+
+    function submitBarcode() {
+      const manualCode = document.getElementById("manualBarcode").value;
+      if (manualCode) {
+        alert(`Entered Code: ${manualCode}`);
       }
     }
   </script>
 </body>
 </html>
+
