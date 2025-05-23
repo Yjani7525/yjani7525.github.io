@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CenterPoint Admin Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"], input[type="url"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    .product-list {
+      margin-top: 30px;
+    }
+    .product-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Admin Panel - Add Product</h2>
+    <div class="form-group">
+      <label for="name">Product Name</label>
+      <input type="text" id="name">
+    </div>
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input type="text" id="price">
+    </div>
+    <div class="form-group">
+      <label for="category">Category</label>
+      <input type="text" id="category">
+    </div>
+    <div class="form-group">
+      <label for="image">Image URL</label>
+      <input type="url" id="image">
+    </div>
+    <div class="form-group">
+      <label for="barcode">Barcode (optional)</label>
+      <input type="text" id="barcode">
+    </div>
+    <button onclick="addProduct()">Add Product</button>
+
+    <div class="product-list" id="productList">
+      <h3>Products Added:</h3>
+    </div>
+  </div>
+
+  <script>
+    const productList = document.getElementById("productList");
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+
+    function addProduct() {
+      const name = document.getElementById("name").value;
+      const price = document.getElementById("price").value;
+      const category = document.getElementById("category").value;
+      const image = document.getElementById("image").value;
+      const barcode = document.getElementById("barcode").value;
+
+      if (!name || !price || !category || !image) {
+        alert("Please fill all required fields");
+        return;
+      }
+
+      const product = { name, price, category, image };
+      if (barcode) product.barcode = barcode;
+      products.push(product);
+      localStorage.setItem("products", JSON.stringify(products));
+      renderProducts();
+
+      document.getElementById("name").value = "";
+      document.getElementById("price").value = "";
+      document.getElementById("category").value = "";
+      document.getElementById("image").value = "";
+      document.getElementById("barcode").value = "";
+    }
+
+    function renderProducts() {
+      productList.innerHTML = '<h3>Products Added:</h3>';
+      products.forEach((p, index) => {
+        const div = document.createElement("div");
+        div.className = "product-card";
+        div.innerHTML = `
+          <strong>${p.name}</strong><br>
+          Price: $${p.price}<br>
+          Category: ${p.category}<br>
+          ${p.barcode ? `Barcode: ${p.barcode}<br>` : ''}
+          <img src="${p.image}" alt="${p.name}" style="width: 100px; height: auto;"><br>
+          <button onclick="editProduct(${index})">Edit</button>
+          <button onclick="deleteProduct(${index})">Delete</button>
+        `;
+        productList.appendChild(div);
+      });
+    }
+
+    function editProduct(index) {
+      const p = products[index];
+      document.getElementById("name").value = p.name;
+      document.getElementById("price").value = p.price;
+      document.getElementById("category").value = p.category;
+      document.getElementById("image").value = p.image;
+      document.getElementById("barcode").value = p.barcode || "";
+      deleteProduct(index);
+    }
+
+    function deleteProduct(index) {
+      products.splice(index, 1);
+      localStorage.setItem("products", JSON.stringify(products));
+      renderProducts();
+    }
+
+    renderProducts();
+  </script>
+</body>
+</html>
